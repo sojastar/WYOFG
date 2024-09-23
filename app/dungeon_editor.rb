@@ -26,16 +26,24 @@ module WYOFG
                           margin:           10,
                           pointer_char:     '>' }
 
-    attr_reader :dungeon
+    attr_reader :dungeons
 
     def initialize()
       width   = WYOFG::Game::DUNGEON_SIZE[0]
       height  = WYOFG::Game::DUNGEON_SIZE[1]
-      @dungeon  = []
-      height.times do |y|
-        @dungeon << []
-        width.times { |x| @dungeon.last << { type: 0, visited: false } }
-      end
+      @dungeons = []
+      @dungeons = SAVE_ENTRIES.times.map do |dungeon_index|
+                    WYOFG::Game::DUNGEON_DEPTH.times.map do |level_index|
+                      level = []
+                      height.times do |y|
+                        level << []
+                        width.times { |x| level.last << { type: 0, visited: false } }
+                      end
+                      level
+                    end
+                  end
+      @current_dungeon  = 0
+      @current_level    = 0
 
       pixel_width   = WYOFG::Game::TILE_SIZE * width
       pixel_height  = WYOFG::Game::TILE_SIZE * height
@@ -70,7 +78,7 @@ module WYOFG
           @cursor[0] -= 1
           @cursor[0]  = WYOFG::Game::DUNGEON_SIZE[0] - 1 if @cursor[0] < 0 
 
-          @cursor_timer   = 0
+          @cursor_timer = 0
         end
 
         if  args.inputs.keyboard.key_down.right ||
@@ -78,7 +86,7 @@ module WYOFG
           @cursor[0] += 1
           @cursor[0]  = 0 if @cursor[0] >= WYOFG::Game::DUNGEON_SIZE[0] 
 
-          @cursor_timer   = 0
+          @cursor_timer = 0
         end
 
         if  args.inputs.keyboard.key_down.up ||
@@ -86,7 +94,7 @@ module WYOFG
           @cursor[1] += 1
           @cursor[1]  = 0 if @cursor[1] >= WYOFG::Game::DUNGEON_SIZE[1] 
 
-          @cursor_timer   = 0
+          @cursor_timer = 0
         end
 
         if  args.inputs.keyboard.key_down.down ||
@@ -94,55 +102,55 @@ module WYOFG
           @cursor[1] -= 1
           @cursor[1]  = WYOFG::Game::DUNGEON_SIZE[1] - 1 if @cursor[1] < 0 
 
-          @cursor_timer   = 0
+          @cursor_timer = 0
         end
 
         if args.inputs.keyboard.key_down.zero
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 0
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 0
         end
 
         if args.inputs.keyboard.key_down.one
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 1
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 1
         end
 
         if args.inputs.keyboard.key_down.two
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 2
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 2
         end
 
         if args.inputs.keyboard.key_down.three
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 3
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 3
         end
 
         if args.inputs.keyboard.key_down.four
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 4
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 4
         end
 
         if args.inputs.keyboard.key_down.five
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 5
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 5
         end
 
         if args.inputs.keyboard.key_down.six
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 6
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 6
         end
 
         if args.inputs.keyboard.key_down.seven
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 7
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 7
         end
 
         if args.inputs.keyboard.key_down.eight
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 8
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 8
         end
 
         if args.inputs.keyboard.key_down.nine
-          @dungeon[@cursor[1]][@cursor[0]][:type] = 9
+          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 9
         end
 
-        if args.inputs.keyboard.key_down.less_than
+        if args.inputs.keyboard.key_down.b#less_than
           @current_level -= 1
           @current_level  = 0 if @current_level < 0
         end
 
-        if args.inputs.keyboard.key_down.greater_than
+        if args.inputs.keyboard.key_down.n#greater_than
           @current_level += 1
           @current_level  = 2 if @current_level > 2
         end
@@ -156,14 +164,17 @@ module WYOFG
         end
 
         if args.inputs.keyboard.key_down.d
-          WYOFG::Debug.put_dungeon  @dungeon,
+          WYOFG::Debug.put_dungeon  @dungeons[@current_dungeon][@current_level],
                                     WYOFG::Game::DUNGEON_SIZE[0],
                                     WYOFG::Game::DUNGEON_SIZE[1]
         end
 
       when :load_menu
-        selection         = @load_menu.tick args
-        @current_dungeon  = selection unless selection == :none
+        selection = @load_menu.tick args
+        if selection != :none
+          @current_dungeon  = selection
+          @mode             = :editor
+        end
 
         if args.inputs.keyboard.key_down.escape
           @mode = :editor
@@ -211,17 +222,16 @@ module WYOFG
       end
 
       # Dungeon :
-      @dungeon.each.with_index do |row,y|
+      @dungeons[@current_dungeon][@current_level].each.with_index do |row,y|
         row.each.with_index do |tile,x|
-          tile_type = @dungeon[y][x]
-          tile      = WYOFG::Game::TILES[@dungeon[y][x][:type]] 
+          tile_template = WYOFG::Game::TILES[tile[:type]]
           args.outputs.primitives <<  { x:        @dungeon_offset[0] + @tile_size * x,
                                         y:        @dungeon_offset[1] + @tile_size * y,
                                         w:        @tile_size,
                                         h:        @tile_size,
                                         path:     WYOFG::Game::TILES_SHEET,
-                                        source_x: WYOFG::Game::TILE_SIZE * tile[:x],
-                                        source_y: WYOFG::Game::TILE_SIZE * tile[:y],
+                                        source_x: WYOFG::Game::TILE_SIZE * tile_template[:x],
+                                        source_y: WYOFG::Game::TILE_SIZE * tile_template[:y],
                                         source_w: WYOFG::Game::TILE_SIZE,
                                         source_h: WYOFG::Game::TILE_SIZE }
         end

@@ -14,6 +14,7 @@ module WYOFG
                       { type: 'guard',      x: 10, y: 0 } ]
 
     DUNGEON_SIZE  = [ 15, 15 ]
+    DUNGEON_DEPTH = 3
 
     def initialize()
     end
