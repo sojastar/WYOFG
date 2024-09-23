@@ -1,0 +1,1 @@
+A Ruby/DragonRuby port of the programs present in the [Write Your Own Fantasy Game For Your Microcomputer](https://worldofspectrum.net/pub/sinclair/books/w/WriteYourOwnFantasyGamesForYourMicrocomputer.pdf) book by [Usborne Books](https://usborne.com).
