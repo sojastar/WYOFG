@@ -38,13 +38,13 @@ module WYOFG
         self
 
       when :dungeon_editor
-        WYOFG::DungeonEditor.new
+        WYOFG::DungeonEditor.new args
 
       when :character_editor
-        WYOFG::CharacterEditor.new
+        WYOFG::CharacterEditor.new args
 
       when :game
-        WYOFG::Game.new
+        WYOFG::Game.new args
 
       end
     end

@@ -16,7 +16,18 @@ module WYOFG
     DUNGEON_SIZE  = [ 15, 15 ]
     DUNGEON_DEPTH = 3
 
-    def initialize()
+    CLASSES       = [ :wanderer, :cleric, :mage, :warrior, :barbariann, :barbarian ]
+    STATS         = { class:        0,
+                      strength:     0,
+                      vitality:     0,
+                      agility:      0,
+                      intelligence: 0,
+                      experience:   0,
+                      luck:         0,
+                      aura:         0,
+                      morality:     0 }
+
+    def initialize(args)
     end
 
     def tick(args)

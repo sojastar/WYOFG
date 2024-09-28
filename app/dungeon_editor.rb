@@ -28,7 +28,7 @@ module WYOFG
 
     attr_reader :dungeons
 
-    def initialize()
+    def initialize(args)
       width   = WYOFG::Game::DUNGEON_SIZE[0]
       height  = WYOFG::Game::DUNGEON_SIZE[1]
       @dungeons = []
