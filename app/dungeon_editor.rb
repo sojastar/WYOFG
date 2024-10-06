@@ -29,6 +29,7 @@ module WYOFG
     attr_reader :dungeons
 
     def initialize(args)
+      # Dungeon Data :
       width   = WYOFG::Game::DUNGEON_SIZE[0]
       height  = WYOFG::Game::DUNGEON_SIZE[1]
       @dungeons = []
@@ -45,6 +46,15 @@ module WYOFG
       @current_dungeon  = 0
       @current_level    = 0
 
+      # Editor logic :
+      @mode = :editor
+
+      @load_menu  = WYOFG::UI::Menu.new LOAD_MENU_ITEMS,
+                                        LOAD_MENU_OPTIONS
+      @load_menu.move_to  ( $gtk.args.grid.w - @load_menu.pixel_size[0] ) / 2,
+                          ( $gtk.args.grid.h - @load_menu.pixel_size[1] ) / 2
+
+      # Editor Rendering :
       pixel_width   = WYOFG::Game::TILE_SIZE * width
       pixel_height  = WYOFG::Game::TILE_SIZE * height
       @dungeon_offset = [ ( $gtk.args.grid.w - EDITOR_DUNGEON_SCALE * pixel_width ).div(2),
@@ -55,13 +65,6 @@ module WYOFG
       @cursor       = [ WYOFG::Game::DUNGEON_SIZE[0].div(2),
                         WYOFG::Game::DUNGEON_SIZE[1].div(2) ]
       @cursor_timer = 0
-
-      @load_menu  = WYOFG::UI::Menu.new LOAD_MENU_ITEMS,
-                                        LOAD_MENU_OPTIONS
-      @load_menu.move_to  ( $gtk.args.grid.w - @load_menu.pixel_size[0] ) / 2,
-                          ( $gtk.args.grid.h - @load_menu.pixel_size[1] ) / 2
-
-      @mode = :editor
 
       title_size  = $gtk.args.gtk.calcstringbox(TITLE, TITLE_SIZE, TITLE_FONT)
       @title_x    = ( $gtk.args.grid.w - title_size[0] ).div(2)

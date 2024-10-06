@@ -1,6 +1,5 @@
 module WYOFG
   class CharacterEditor
-    STATS_COUNT   = WYOFG::Game::CLASSE.keys.length
     SAVE_ENTRIES  = 10
 
     SHOPS = { armoury:  { name:   "Armoury",
@@ -83,10 +82,9 @@ module WYOFG
     TITLE_SIZE  = 1
     TITLE_FONT  = 'yoster.ttf'
 
-    #HELP_OFFSET     = [ 50, 600 ]
-    #HELP_ENTRY_SIZE = [ 300, 40 ]
-    #HELP_TEXT_SIZE  = 1
-    #HELP_FONT       = 'yoster.ttf'
+    DATA_SIZE     = 1
+    DATA_FONT     = 'yoster.ttf'
+    DATA_OFFSET_Y = 600
 
     SAVE_ENTRIES      = 10
     LOAD_MENU_ITEMS   = SAVE_ENTRIES.times.map do |i|
@@ -103,22 +101,67 @@ module WYOFG
                           pointer_char:     '>' }
 
     def initialize(args)
+      # Character Data :
       if args.state.characters.nil?
         args.state.characters = SAVE_ENTRIES.times.map do |character|
-                                  { stats:        Array.new(WYOFG::Game::STATS.length) { 0 },
+                                  base_stats  = WYOFG::Game::STATS
+                                                .zip( Array.new(WYOFG::Game::STATS.length) { rand(5) + 2 } )
+                                                .to_h
+                                  stats = WYOFG::Game::STATS
+                                          .zip( Array.new(WYOFG::Game::STATS.length) { 0 } )
+                                          .to_h
+
+                                  { class:        class_from_stats(base_stats,stats),
+                                    base_stats:   base_stats,
+                                    stats:        stats,
+                                    experience:   1,
                                     stat_points:  5,
                                     gold:         150,
                                     stuff:        [] }
-                                  .to_h
                                 end
       end
       @current_char_index = 0
 
-      @mode  = :stats 
+      # Editor Logic :
+      @mode  = :stats
 
       @current_row  = 0
 
       @menu  = nil
+
+      # Editor Rendering :
+      title_size  = $gtk.args.gtk.calcstringbox(TITLE, TITLE_SIZE, TITLE_FONT)
+      @title_x    = ( $gtk.args.grid.w - title_size[0] ).div(2)
+      @title_y    = $gtk.args.grid.h - title_size[1]
+
+      lines               = WYOFG::Game::CLASSES.map { |klass| klass.to_s } +     # all the potential text lines
+                            [ 'points: 99' ] +
+                            WYOFG::Game::STATS.map { |stat| stat.to_s + ': 99' }
+      longuest_line       = lines.sort { |l1,l2| l2.length <=> l1.length }.first
+      longuest_line_size  = $gtk.args.gtk.calcstringbox(longuest_line, DATA_FONT)
+      @data_offset_x      = ( $gtk.args.grid.w - longuest_line_size[0] ).to_i.div(2)
+      @data_line_height   = longuest_line_size[1]
+      @data_margin        = longuest_line_size[1].to_i.div(2)
+    end
+
+    def class_from_stats(base_stats,stats)
+      strength      = base_stats[:strength]     + stats[:strength]
+      vitality      = base_stats[:vitality]     + stats[:vitality]
+      agility       = base_stats[:agility]      + stats[:agility]
+      intelligence  = base_stats[:intelligence] + stats[:intelligence]
+      morality      = base_stats[:morality]     + stats[:morality]
+
+      klass = :wanderer
+      klass = :cleric     if  intelligence > 6 && morality > 7
+      klass = :mage       if  intelligence > 8 && morality > 7
+      klass = :warrior    if  strength > 7 &&
+                              morality > 5 &&
+                              strength + vitality > 10
+      klass = :barbarian  if  strength > 8 &&
+                              vitality + agility > 12 &&
+                              morality < 6
+
+      klass
     end
 
     def tick(args)
@@ -126,25 +169,34 @@ module WYOFG
 
       case @mode
       when :stats
-        @current_row += 1 if args.inputs.keyboard.key_down.down
-        @current_row  = 0 if @current_row >= STATS_COUNT
-        @current_row -= 1 if args.inputs.keyboard.key_down.down
-        @current_row  = STATS_COUNT if @current_row < 0
-
-        if WYOFG::Game::STATS.keys[@current_row] == :class
-          current_char[@current_row] += 1 if args.state.keyboard.key_down.right
-          current_char[@current_row]  = 0 if current_char[:class] >= WYOFG::Game::STATS.length
-
-          current_char[@current_row] -= 1 if args.state.keyboard.key_down.left
-          current_char[@current_row]  = WYOFG::Game::STATS.length if current_char[:class] < 0
-          
-        else
-          current_char[@current_row] += 1 if args.state.keyboard.key_down.right &&
-                                              current_char[] > 0
-
-          current_char[@current_row] -= 1 if args.state.keyboard.key_down.left
-          current_char[@current_row]  = 0 if current_char[:class] < 0
+        if args.inputs.keyboard.key_down.down
+          @current_row += 1
+          @current_row  = 0 if @current_row >= WYOFG::Game::STATS.length
         end
+
+        if args.inputs.keyboard.key_down.up
+          @current_row -= 1
+          @current_row  = WYOFG::Game::STATS.length if @current_row < 0
+        end
+
+        current_stat  = WYOFG::Game::STATS[@current_row]
+
+        if args.inputs.keyboard.key_down.right
+          if current_char[:stat_points] > 0
+            current_char[:stats][current_stat] += 1
+            current_char[:stat_points] -= 1
+          end
+        end
+
+        if args.inputs.keyboard.key_down.left
+          if current_char[:stats][current_stat] > 0
+            current_char[:stats][current_stat] -= 1
+            current_char[:stat_points] += 1
+          end
+        end
+
+        current_char[:class] = class_from_stats(current_char[:base_stats],
+                                                current_char[:stats])
 
       when :armoury
       when :accoutrements
@@ -158,9 +210,58 @@ module WYOFG
     end
 
     def render(args)
+      args.outputs.background_color = [ 0, 0, 0 ]
+
+      # Title :
+      args.outputs.primitives <<  { x:     @title_x,
+                                    y:     @title_y,
+                                    text:  TITLE,
+                                    font:  TITLE_FONT,
+                                    size:  TITLE_SIZE,
+                                    r:     255,
+                                    g:     255,
+                                    b:     255,
+                                    a:     255 }
+
+      # Character Data :
+      character = args.state.characters[@current_char_index]
+
       case @mode
       when :stats
-        CLASSES.each_pair do |klass,stats|
+        args.outputs.primitives <<  { x:    @data_offset_x,
+                                      y:    DATA_OFFSET_Y,
+                                      text: character[:class].capitalize,
+                                      font: DATA_FONT,
+                                      size: DATA_SIZE,
+                                      r:    255,
+                                      g:    255,
+                                      b:    255,
+                                      a:    255 }
+
+        args.outputs.primitives <<  { x:    @data_offset_x,
+                                      y:    DATA_OFFSET_Y - @data_margin - @data_line_height,
+                                      text: "Points: #{character[:stat_points]}",
+                                      font: DATA_FONT,
+                                      size: DATA_SIZE,
+                                      r:    255,
+                                      g:    255,
+                                      b:    255,
+                                      a:    255 }
+
+        #character[:stats].each_pair.with_index do |pair,line|
+        WYOFG::Game::STATS.each.with_index do |stat,line|
+          final_stat  = character[:base_stats][stat] + character[:stats][stat]
+          indent      = line == @current_row ? '>' : ' '
+          args.outputs.primitives <<  { x:    @data_offset_x,
+                                        y:    DATA_OFFSET_Y - (line + 2 ) * ( @data_margin + @data_line_height ),
+                                        #text: "#{indent} #{pair.first}: #{pair.last}",
+                                        text: "#{indent} #{stat}: #{final_stat}",
+                                        font: DATA_FONT,
+                                        size: DATA_SIZE,
+                                        r:    255,
+                                        g:    255,
+                                        b:    255,
+                                        a:    255 }
         end
 
       when :armoury
