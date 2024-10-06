@@ -107,7 +107,8 @@ module WYOFG
         args.state.characters = SAVE_ENTRIES.times.map do |character|
                                   { stats:        Array.new(WYOFG::Game::STATS.length) { 0 },
                                     stat_points:  5,
-                                    gold:         150 }
+                                    gold:         150,
+                                    stuff:        [] }
                                   .to_h
                                 end
       end
@@ -159,7 +160,7 @@ module WYOFG
     def render(args)
       case @mode
       when :stats
-        CLASSES.each_pair do |class,stats|
+        CLASSES.each_pair do |klass,stats|
         end
 
       when :armoury
