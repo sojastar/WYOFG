@@ -3,87 +3,89 @@ module WYOFG
     SAVE_ENTRIES  = 10
 
     SHOPS = { armoury:  { name:   "Armoury",
-                          goods:   { two_hand_sword: { type: :two_hand_sword,
-                                                              price:  0,
-                                                              can_use:  [] },
-                                            broadsword:     { type:   :broadsword,
-                                                              price:  0,
-                                                              can_use:  [] },
-                                            shortsword:     { type:   :shortsword,
-                                                              price:  0,
-                                                              can_use:  [] },
-                                            axe:            { type:   :axe,
-                                                              price:  0,
-                                                              can_use:  [] },
-                                            mace:           { type:   :mace,
-                                                              price:  0,
-                                                              can_use:  [] },
-                                            flail:          { type:   :flail,
-                                                              price:  0,
-                                                              can_use:  [] },
-                                            dagger:         { type:   :dagger,
-                                                              price:  0,
-                                                              can_use:  [] },
-                                            gauntlet:       { type:   :gauntlet,
-                                                              price:  0,
-                                                              can_use:  [] } } },
+                          goods:  [ { type:     :two_hand_sword,
+                                      price:    20,
+                                      can_use:  [ :barbarian ] },
+                                    { type:     :broadsword,
+                                      price:    16,
+                                      can_use:  [ :warrior, :barbarian] },
+                                    { type:     :shortsword,
+                                      price:    12,
+                                      can_use:  [ :wanderer, :warrior, :barbarian ] },
+                                    { type:     :axe,
+                                      price:    15,
+                                      can_use:  [ :wanderer, :warrior, :barbarian ] },
+                                    { type:     :mace,
+                                      price:    8,
+                                      can_use:  [ :wanderer, :warrior, :barbarian ] },
+                                    { type:     :flail,
+                                      price:    10,
+                                      can_use:  [ :warrior, :barbarian ] },
+                                    { type:     :dagger,
+                                      price:    8,
+                                      can_use:  [ :wanderer, :cleric, :mage, :warrior, :barbarian ] },
+                                    { type:     :gauntlet,
+                                      price:    6,
+                                      can_use:  [ :wanderer, :warrior, :barbarian ] } ] },
               accoutrements:  { name:   "Accoutrements",
-                                goods:  { heavy_armour:   { type:   :heavy_armour,
-                                                            price:  0,
-                                                            can_use:  [] },
-                                          chain_armour:   { type:   :chain_armour,
-                                                            price:  0,
-                                                            can_use:  [] },
-                                          leather_amour:  { type:   :leather_armour,
-                                                            price:  0,
-                                                            can_use:  [] },
-                                          heavy_robe:     { type:   :heavy_robe,
-                                                            price:  0,
-                                                            can_use:  [] },
-                                          gold_helmet:    { type:   :gold_helmet,
-                                                            price:  0,
-                                                            can_use:  [] },
-                                          headpiece:      { type:   :headpiece,
-                                                            price:  0,
-                                                            can_use:  [] },
-                                          shield:         { type:   :shield,
-                                                            price:  0,
-                                                            can_use:  [] },
-                                          torch:          { type:   :torch,
-                                                            price:  0,
-                                                            can_use:  [] } } },
+                                goods:  [ { type:     :heavy_armour,
+                                            price:    18,
+                                            can_use:  [ :warrior, :barbarian ] },
+                                          { type:     :chain_armour,
+                                            price:    15,
+                                            can_use:  [ :warrior, :barbarian ] },
+                                          { type:     :leather_armour,
+                                            price:    9,
+                                            can_use:  [ :wander, :warrior, :barbarian ] },
+                                          { type:     :heavy_robe,
+                                            price:    9,
+                                            can_use:  [ :wanderer, :cleric, :mage, :warrior, :barbarian ] },
+                                          { type:     :gold_helmet,
+                                            price:    14,
+                                            can_use:  [ :warrior, :barbarian ] },
+                                          { type:     :headpiece,
+                                            price:    8,
+                                            can_use:  [ :wanderer, :cleric, :warrior, :barbarian ] },
+                                          { type:     :shield,
+                                            price:    6,
+                                            can_use:  [ :wanderer, :cleric, :warrior, :barbarian ] },
+                                          { type:     :torch,
+                                            price:    6,
+                                            can_use:  [ :wanderer, :cleric, :mage, :warrior, :barbarian ] } ] },
               emporium: { name:   "Emporium",
-                          goods:  { necronomicon:   { type:   :necronomicon,
-                                                      price:  0,
-                                                      can_use:  [] },
-                                    scrolls:        { type:   :scrolls,
-                                                      price:  0,
-                                                      can_use:  [] },
-                                    ring:           { type:   :ring,
-                                                      price:  0,
-                                                      can_use:  [] },
-                                    mystic_amulet:  { type:   :mystic_amulet,
-                                                      price:  0,
-                                                      can_use:  [] },
-                                    sash:           { type:   :sash,
-                                                      price:  0,
-                                                      can_use:  [] },
-                                    cloak:          { type:   :cloak,
-                                                      price:  0,
-                                                      can_use:  [] },
-                                    healing_salve:  { type:   :healing_salve,
-                                                      price:  0,
-                                                      can_use:  [] },
-                                    potions:        { type:   :potions,
-                                                      price:  0,
-                                                      can_use:  [] } } } }
+                          goods:  [ { type:     :necronomicon,
+                                      price:    20,
+                                      can_use:  [ :wanderer, :cleric, :mage ] },
+                                    { type:     :scrolls,
+                                      price:    15,
+                                      can_use:  [ :mage ] },
+                                    { type:     :ring,
+                                      price:    14,
+                                      can_use:  [ :wanderer, :cleric, :mage ] },
+                                    { type:     :mystic_amulet,
+                                      price:    12,
+                                      can_use:  [ :wanderer, :mage ] },
+                                    { type:     :sash,
+                                      price:    10,
+                                      can_use:  [ :wanderer, :cleric, :mage ] },
+                                    { type:     :cloak,
+                                      price:    8,
+                                      can_use:  [ :wanderer, :cleric, :mage ] },
+                                    { type:     :healing_salve,
+                                      price:    6,
+                                      can_use:  [ :wanderer, :cleric, :mage, :warrior, :barbarian ] },
+                                    { type:     :potions,
+                                      price:    6,
+                                      can_use:  [ :wanderer, :cleric, :mage, :warrior, :barbarian ] } ] } }
+    SHOPS_MESSAGE = 'Choose well Sire!'
+    SHOPS_PADDING = 20
 
     TITLE       = 'Character Editor'
     TITLE_SIZE  = 1
-    TITLE_FONT  = 'yoster.ttf'
+    TITLE_FONT  = 'white_rabbit.ttf'
 
     DATA_SIZE     = 1
-    DATA_FONT     = 'yoster.ttf'
+    DATA_FONT     = 'white_rabbit.ttf'
     DATA_OFFSET_Y = 600
 
     SAVE_ENTRIES      = 10
@@ -176,7 +178,7 @@ module WYOFG
 
         if args.inputs.keyboard.key_down.up
           @current_row -= 1
-          @current_row  = WYOFG::Game::STATS.length if @current_row < 0
+          @current_row  = WYOFG::Game::STATS.length - 1 if @current_row < 0
         end
 
         current_stat  = WYOFG::Game::STATS[@current_row]
@@ -195,13 +197,39 @@ module WYOFG
           end
         end
 
+        if args.inputs.keyboard.key_down.r
+          current_char[:base_stats] = WYOFG::Game::STATS
+                                      .zip( Array.new(WYOFG::Game::STATS.length) { rand(6) + 2 } )
+                                      .to_h
+          current_char[:stats]  = WYOFG::Game::STATS
+                                  .zip( Array.new(WYOFG::Game::STATS.length) { 0 } )
+                                  .to_h
+        end
+
         current_char[:class] = class_from_stats(current_char[:base_stats],
                                                 current_char[:stats])
 
-      when :armoury
-      when :accoutrements
-      when :emporium
+      when :armoury, :accoutrements, :emporium
+        if args.inputs.keyboard.key_down.down
+          @current_row += 1
+          @current_row  = 0 if @current_row >= SHOPS[@mode][:goods].length
+        end
+
+        if args.inputs.keyboard.key_down.up
+          @current_row -= 1
+          @current_row  = SHOPS[@mode][:goods].length - 1 if @current_row < 0
+        end
+
       when :load
+      end
+
+      if args.inputs.keyboard.key_down.space
+        @mode = case @mode
+                when :stats         then :armoury
+                when :armoury       then :accoutrements
+                when :accoutrements then :emporium
+                when :emporium      then :stats
+                end
       end
 
       render(args)
@@ -248,13 +276,11 @@ module WYOFG
                                       b:    255,
                                       a:    255 }
 
-        #character[:stats].each_pair.with_index do |pair,line|
         WYOFG::Game::STATS.each.with_index do |stat,line|
           final_stat  = character[:base_stats][stat] + character[:stats][stat]
           indent      = line == @current_row ? '>' : ' '
           args.outputs.primitives <<  { x:    @data_offset_x,
                                         y:    DATA_OFFSET_Y - (line + 2 ) * ( @data_margin + @data_line_height ),
-                                        #text: "#{indent} #{pair.first}: #{pair.last}",
                                         text: "#{indent} #{stat}: #{final_stat}",
                                         font: DATA_FONT,
                                         size: DATA_SIZE,
@@ -264,11 +290,57 @@ module WYOFG
                                         a:    255 }
         end
 
-      when :armoury
-      when :accoutrements
-      when :emporium
+      when :armoury, :accoutrements, :emporium
+        args.outputs.primitives <<  { x:    @data_offset_x,
+                                      y:    DATA_OFFSET_Y,
+                                      text: SHOPS[@mode][:name].capitalize,
+                                      font: DATA_FONT,
+                                      size: DATA_SIZE,
+                                      r:    255,
+                                      g:    255,
+                                      b:    255,
+                                      a:    255 }
+
+        args.outputs.primitives <<  { x:    @data_offset_x,
+                                      y:    DATA_OFFSET_Y - @data_margin - @data_line_height,
+                                      text: SHOPS_MESSAGE,
+                                      font: DATA_FONT,
+                                      size: DATA_SIZE,
+                                      r:    255,
+                                      g:    255,
+                                      b:    255,
+                                      a:    255 }
+
+        args.outputs.primitives <<  { x:    @data_offset_x,
+                                      y:    DATA_OFFSET_Y - 2 * ( @data_margin + @data_line_height ),
+                                      text: "Gold Coins: #{character[:gold]}",
+                                      font: DATA_FONT,
+                                      size: DATA_SIZE,
+                                      r:    255,
+                                      g:    255,
+                                      b:    255,
+                                      a:    255 }
+
+        SHOPS[@mode][:goods].each.with_index do |item,line|
+          item_name   = item_symbol_to_string(item[:type])
+          indent      = line == @current_row ? '>' : ' '
+          args.outputs.primitives <<  { x:    @data_offset_x,
+                                        y:    DATA_OFFSET_Y - (line + 3 ) * ( @data_margin + @data_line_height ),
+                                        text: "#{indent} #{item_name.ljust(20)}#{item[:price]}",
+                                        font: DATA_FONT,
+                                        size: DATA_SIZE,
+                                        r:    255,
+                                        g:    255,
+                                        b:    255,
+                                        a:    255 }
+        end
+
       when :load
       end
+    end
+
+    def item_symbol_to_string(symbol)
+      symbol.to_s.gsub('_',' ').capitalize
     end
   end
 end
