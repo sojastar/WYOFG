@@ -105,7 +105,7 @@ module WYOFG
       if args.state.characters.nil?
         args.state.characters = SAVE_ENTRIES.times.map do |character|
                                   base_stats  = WYOFG::Game::STATS
-                                                .zip( Array.new(WYOFG::Game::STATS.length) { rand(5) + 2 } )
+                                                .zip( Array.new(WYOFG::Game::STATS.length) { rand(6) + 2 } )
                                                 .to_h
                                   stats = WYOFG::Game::STATS
                                           .zip( Array.new(WYOFG::Game::STATS.length) { 0 } )
