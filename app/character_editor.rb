@@ -2,6 +2,14 @@ module WYOFG
   class CharacterEditor
     SAVE_ENTRIES  = 10
 
+    TITLE       = 'Character Editor'
+    TITLE_SIZE  = 1
+    TITLE_FONT  = 'white_rabbit.ttf'
+
+    DATA_SIZE     = 1
+    DATA_FONT     = 'white_rabbit.ttf'
+    DATA_OFFSET_Y = 600
+
     SHOPS = { armoury:  { name:   "Armoury",
                           goods:  [ { type:     :two_hand_sword,
                                       price:    20,
@@ -81,18 +89,11 @@ module WYOFG
     SHOP_CANT_BUY_MESSAGE       = 'Not for '
     SHOP_TOO_EXPENSIVE_MESSAGE  = 'It is too expensive, Sire'
     SHOP_ALREADY_HAVE_MESSAGE   = 'You have it, Sire'
+    SHOPS_PADDING = 20
 
-    SHOPS_PADDING         = 20
+    NAME_INPUT_MESSAGE  = 'Name Thy Character'
+    NAME_MAX_LENGTH     = 16
 
-    TITLE       = 'Character Editor'
-    TITLE_SIZE  = 1
-    TITLE_FONT  = 'white_rabbit.ttf'
-
-    DATA_SIZE     = 1
-    DATA_FONT     = 'white_rabbit.ttf'
-    DATA_OFFSET_Y = 600
-
-    SAVE_ENTRIES      = 10
     LOAD_MENU_ITEMS   = SAVE_ENTRIES.times.map do |i|
                           { icon:     :none,
                             text:     "Character #{i}",
@@ -109,7 +110,7 @@ module WYOFG
     def initialize(args)
       # Character Data :
       if args.state.characters.nil?
-        args.state.characters = SAVE_ENTRIES.times.map do |character|
+        args.state.characters = SAVE_ENTRIES.times.map do |index|
                                   base_stats  = WYOFG::Game::STATS
                                                 .zip( Array.new(WYOFG::Game::STATS.length) { rand(6) + 2 } )
                                                 .to_h
@@ -117,7 +118,8 @@ module WYOFG
                                           .zip( Array.new(WYOFG::Game::STATS.length) { 0 } )
                                           .to_h
 
-                                  { class:        class_from_stats(base_stats,stats),
+                                  { name:         "Player #{index}",
+                                    class:        class_from_stats(base_stats,stats),
                                     base_stats:   base_stats,
                                     stats:        stats,
                                     experience:   1,
@@ -254,6 +256,18 @@ module WYOFG
           end
         end
 
+      when :name
+        if  args.inputs.keyboard.key_down.backspace ||
+            args.inputs.keyboard.key_down.delete
+          current_char[:name] = current_char[:name][0...-2]
+        end
+
+        if args.inputs.keyboard.key_down.char
+          if current_char[:name].length < NAME_MAX_LENGTH
+            current_char[:name] << args.inputs.keyboard.key_down.char
+          end
+        end
+
       when :load
       end
 
@@ -262,7 +276,8 @@ module WYOFG
                 when :stats         then :armoury
                 when :armoury       then :accoutrements
                 when :accoutrements then :emporium
-                when :emporium      then :stats
+                when :emporium      then :name
+                when :name          then :stats
                 end
       end
 
@@ -292,6 +307,7 @@ module WYOFG
       # Character Data :
       character = args.state.characters[@current_char_index]
 
+      # Pages :
       case @mode
       when :stats
         args.outputs.primitives <<  { x:    @data_offset_x,
@@ -373,7 +389,29 @@ module WYOFG
                                         a:    255 }
         end
 
+      when :name
+        args.outputs.primitives <<  { x:    @data_offset_x,
+                                      y:    DATA_OFFSET_Y,
+                                      text: NAME_INPUT_MESSAGE,
+                                      font: DATA_FONT,
+                                      size: DATA_SIZE,
+                                      r:    255,
+                                      g:    255,
+                                      b:    255,
+                                      a:    255 }
+
+        args.outputs.primitives <<  { x:    @data_offset_x,
+                                      y:    DATA_OFFSET_Y - @data_margin - @data_line_height,
+                                      text: character[:name],
+                                      font: DATA_FONT,
+                                      size: DATA_SIZE,
+                                      r:    255,
+                                      g:    255,
+                                      b:    255,
+                                      a:    255 }
+
       when :load
+
       end
     end
 
