@@ -5,11 +5,13 @@ module WYOFG
 
     TITLE       = 'Dungeon Editor'
     TITLE_SIZE  = 1
+    #TITLE_FONT  = 'C64_Pro_Mono-STYLE.ttf',
     TITLE_FONT  = 'white_rabit.ttf'
 
     HELP_OFFSET     = [ 50, 600 ]
     HELP_ENTRY_SIZE = [ 300, 40 ]
     HELP_TEXT_SIZE  = 1
+    #HELP_FONT       = 'C64_Pro_Mono-STYLE.ttf'
     HELP_FONT       = 'white_rabit.ttf'
 
     SAVE_ENTRIES      = 10
@@ -18,7 +20,8 @@ module WYOFG
                             text:     "Dungeon #{i}",
                             value:    i }
                         end
-    LOAD_MENU_OPTIONS = { font:             "white_rabit.ttf",
+    LOAD_MENU_OPTIONS = { #font:             'C64_Pro_Mono-STYLE.ttf',
+                          font:             "white_rabit.ttf",
                           text_color:       [ 0, 0, 0, 255 ],
                           bg_color:         [ 255, 255, 255, 255 ],
                           text_size:        1,

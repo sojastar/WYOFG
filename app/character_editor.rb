@@ -77,8 +77,12 @@ module WYOFG
                                     { type:     :potions,
                                       price:    6,
                                       can_use:  [ :wanderer, :cleric, :mage, :warrior, :barbarian ] } ] } }
-    SHOPS_MESSAGE = 'Choose well Sire!'
-    SHOPS_PADDING = 20
+    SHOP_WELCOME_MESSAGE        = 'Choose well Sire!'
+    SHOP_CANT_BUY_MESSAGE       = 'Not for '
+    SHOP_TOO_EXPENSIVE_MESSAGE  = 'It is too expensive, Sire'
+    SHOP_ALREADY_HAVE_MESSAGE   = 'You have it, Sire'
+
+    SHOPS_PADDING         = 20
 
     TITLE       = 'Character Editor'
     TITLE_SIZE  = 1
@@ -130,6 +134,8 @@ module WYOFG
       @current_row  = 0
 
       @menu  = nil
+
+      @shop_keeper = SHOP_WELCOME_MESSAGE
 
       # Editor Rendering :
       title_size  = $gtk.args.gtk.calcstringbox(TITLE, TITLE_SIZE, TITLE_FONT)
@@ -198,26 +204,54 @@ module WYOFG
         end
 
         if args.inputs.keyboard.key_down.r
-          current_char[:base_stats] = WYOFG::Game::STATS
-                                      .zip( Array.new(WYOFG::Game::STATS.length) { rand(6) + 2 } )
-                                      .to_h
-          current_char[:stats]  = WYOFG::Game::STATS
-                                  .zip( Array.new(WYOFG::Game::STATS.length) { 0 } )
-                                  .to_h
+          current_char[:base_stats]   = WYOFG::Game::STATS
+                                        .zip( Array.new(WYOFG::Game::STATS.length) { rand(6) + 2 } )
+                                        .to_h
+          current_char[:stats]        = WYOFG::Game::STATS
+                                        .zip( Array.new(WYOFG::Game::STATS.length) { 0 } )
+                                        .to_h
+          current_char[:stat_points]  = 5
+          current_char[:gold]         = 150
+          current_char[:stuff]        = []
         end
 
         current_char[:class] = class_from_stats(current_char[:base_stats],
                                                 current_char[:stats])
 
       when :armoury, :accoutrements, :emporium
+        selected_item = SHOPS[@mode][:goods][@current_row]
+
         if args.inputs.keyboard.key_down.down
           @current_row += 1
           @current_row  = 0 if @current_row >= SHOPS[@mode][:goods].length
+
+          @shop_keeper = SHOP_WELCOME_MESSAGE
         end
 
         if args.inputs.keyboard.key_down.up
           @current_row -= 1
           @current_row  = SHOPS[@mode][:goods].length - 1 if @current_row < 0
+
+          @shop_keeper = SHOP_WELCOME_MESSAGE
+        end
+
+        if args.inputs.keyboard.key_down.right
+          if !selected_item[:can_use].include?(current_char[:class])
+            @shop_keeper = SHOP_CANT_BUY_MESSAGE + "#{current_char[:class].to_s.capitalize}"
+
+          elsif current_char[:stuff].include?(selected_item[:type]) &&
+                selected_item[:type] != :potions                    &&
+                selected_item[:type] != :healing_salve
+            @shop_keeper = SHOP_ALREADY_HAVE_MESSAGE
+
+          elsif selected_item[:price] > current_char[:gold]
+            @shop_keeper = SHOP_TO_EXPENSIVE_MESSAGE
+
+          else
+            current_char[:stuff] << selected_item[:type]
+            current_char[:gold] -= selected_item[:price]
+
+          end
         end
 
       when :load
@@ -230,6 +264,10 @@ module WYOFG
                 when :accoutrements then :emporium
                 when :emporium      then :stats
                 end
+      end
+
+      if args.inputs.keyboard.key_down.s
+        # save
       end
 
       render(args)
@@ -303,7 +341,7 @@ module WYOFG
 
         args.outputs.primitives <<  { x:    @data_offset_x,
                                       y:    DATA_OFFSET_Y - @data_margin - @data_line_height,
-                                      text: SHOPS_MESSAGE,
+                                      text: @shop_keeper,
                                       font: DATA_FONT,
                                       size: DATA_SIZE,
                                       r:    255,

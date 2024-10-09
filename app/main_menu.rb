@@ -11,8 +11,9 @@ module WYOFG
                             value:    :game } ]
     MAIN_MENU_OPTIONS = { #icon_width:       24,
                           #icon_height:      24,
-                          font:             "white_rabbit.ttf",
+                          #font:             "white_rabbit.ttf",
                           #font:             "yoster.ttf",
+                          font:             "C64_Pro_Mono-STYLE.ttf",
                           text_color:       [ 255, 255, 255, 255 ],
                           bg_color:         [ 0, 0, 0, 255 ],
                           text_size:        1,
