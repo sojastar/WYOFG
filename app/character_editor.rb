@@ -99,9 +99,9 @@ module WYOFG
                             text:     "Character #{i}",
                             value:    i }
                         end
-    LOAD_MENU_OPTIONS = { font:             "yoster.ttf",
-                          text_color:       [ 0, 0, 0, 255 ],
-                          bg_color:         [ 255, 255, 255, 255 ],
+    LOAD_MENU_OPTIONS = { font:             'white_rabbit.ttf',
+                          text_color:       [ 255, 255, 255, 255 ],
+                          bg_color:         [ 0, 0, 0, 255 ],
                           text_size:        1,
                           line_max_size:    30,
                           margin:           10,
@@ -135,7 +135,8 @@ module WYOFG
 
       @current_row  = 0
 
-      @menu  = nil
+      @menu  = WYOFG::UI::Menu.new  LOAD_MENU_ITEMS,
+                                    LOAD_MENU_OPTIONS
 
       @shop_keeper = SHOP_WELCOME_MESSAGE
 
@@ -260,29 +261,57 @@ module WYOFG
         if  args.inputs.keyboard.key_down.backspace ||
             args.inputs.keyboard.key_down.delete
           current_char[:name] = current_char[:name][0...-2]
+
+          LOAD_MENU_ITEMS[@current_char_index][:text] = current_char[:name]
+
         end
 
         if args.inputs.keyboard.key_down.char
           if current_char[:name].length < NAME_MAX_LENGTH
             current_char[:name] << args.inputs.keyboard.key_down.char
+
+            LOAD_MENU_ITEMS[@current_char_index][:text] = current_char[:name]
           end
         end
 
-      when :load
       end
 
-      if args.inputs.keyboard.key_down.space
-        @mode = case @mode
-                when :stats         then :armoury
-                when :armoury       then :accoutrements
-                when :accoutrements then :emporium
-                when :emporium      then :name
-                when :name          then :stats
-                end
-      end
+      if @mode != :load
+        if args.inputs.keyboard.key_down.space
+          @mode = case @mode
+                  when :stats         then :armoury
+                  when :armoury       then :accoutrements
+                  when :accoutrements then :emporium
+                  when :emporium      then :name
+                  when :name          then :stats
+                  end
+        end
 
-      if args.inputs.keyboard.key_down.s
-        # save
+        if args.inputs.keyboard.key_down.escape
+          @prev_mode  = @mode
+          @mode       = :load
+
+          @menu.calculate_pixel_size
+          @menu.move_to ( $gtk.args.grid.w - @menu.pixel_size[0] ) / 2,
+                        ( $gtk.args.grid.h - @menu.pixel_size[1] ) / 2
+        end
+
+        if args.inputs.keyboard.key_down.s
+          # save
+        end
+
+      elsif @mode == :load
+        selection = @menu.tick args
+        if selection != :none
+          @current_char_index  = selection
+          @mode = @prev_mode
+
+        end
+
+        if args.inputs.keyboard.key_down.escape
+          @mode = @prev_mode
+        end
+
       end
 
       render(args)
@@ -411,8 +440,10 @@ module WYOFG
                                       a:    255 }
 
       when :load
+        @menu.render(args)
 
       end
+
     end
 
     def item_symbol_to_string(symbol)

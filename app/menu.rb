@@ -23,42 +23,45 @@ module WYOFG
         @options[:margin]         = DEFAULT_MARGIN          unless @options.has_key?(:margin)
         @options[:pointer_char]   = DEFAULT_POINTER_CHAR    unless @options.has_key?(:pointer_char)
 
+        calculate_pixel_size
+
+        @position = [ 0, 0 ]
+      end
+
+      def calculate_pixel_size
         longest_line  = items.map { |item|
-                          item[:text].to_lines options[:line_max_size]
+                          item[:text].to_lines @options[:line_max_size]
                         }
                         .flatten
                         .sort { |l1,l2| l2.length <=> l1.length }
                         .first
         @text_pixel_size  = $gtk.args.gtk.calcstringbox(longest_line,
-                                                        options[:text_size],
-                                                        options[:font])
+                                                        @options[:text_size],
+                                                        @options[:font])
 
-        @pointer_size = $gtk.args.gtk.calcstringbox(options[:pointer_char],
-                                                    options[:text_size],
-                                                    options[:font])
+        @pointer_size = $gtk.args.gtk.calcstringbox(@options[:pointer_char],
+                                                    @options[:text_size],
+                                                    @options[:font])
 
         @items_max_height = @items.map { |item|
-                                text_lines  = item[:text].length.div(options[:line_max_size]) + 1
-                              if options.has_key?(:icon_height)
+                                text_lines  = item[:text].length.div(@options[:line_max_size]) + 1
+                              if @options.has_key?(:icon_height)
                                 [ @text_pixel_size[1] * text_lines, 
-                                  options[:icon_height] ].max
+                                  @options[:icon_height] ].max
                               else
                                 @text_pixel_size[1] * text_lines
                               end
                             }.max 
 
         @icon_offset, @text_offset  = if @options.has_key?(:icon_width)
-                                        [ 2 * options[:margin] + @pointer_size[0],
-                                         3 * options[:margin] + @pointer_size[0] + options[:icon_width] ]
+                                        [ 2 * @options[:margin] + @pointer_size[0],
+                                          3 * @options[:margin] + @pointer_size[0] + @options[:icon_width] ]
                                       else
-                                        [ 0, 2 * options[:margin] + @pointer_size[0] ]
+                                        [ 0, 2 * @options[:margin] + @pointer_size[0] ]
                                       end
 
         @pixel_size = [ @text_offset + @text_pixel_size[0] + @options[:margin],
                         @items.length * @text_pixel_size[1] ]
-        puts @background_size
-
-        @position = [ 0, 0 ]
       end
 
       def move_to(x,y)
