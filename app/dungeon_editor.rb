@@ -190,7 +190,7 @@ module WYOFG
 
       render(args)
 
-      self
+      args.inputs.keyboard.key_down.tab ? args.state.main_menu : self
     end
 
     def render(args)

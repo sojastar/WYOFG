@@ -22,16 +22,19 @@ module WYOFG
                           margin:           10,
                           pointer_char:     '>' }
 
-    def initialize()
+    def initialize(args)
       @menu = WYOFG::UI::Menu.new MAIN_MENU_ITEMS,
                                   MAIN_MENU_OPTIONS
-      @menu.move_to ( $gtk.args.grid.w - @menu.pixel_size[0] ) / 2,
-                    ( $gtk.args.grid.h - @menu.pixel_size[1] ) / 2
+      @menu.move_to ( args.grid.w - @menu.pixel_size[0] ) / 2,
+                    ( args.grid.h - @menu.pixel_size[1] ) / 2
+
+      #@dungeon_editor   = WYOFG::DungeonEditor.new args
+      #@character_editor = WYOFG::CharacterEditor.new args
+      #@game             = WYOFG::Game.new args
     end
 
     def tick(args)
       selection = @menu.tick args
-      #puts selection if selection != :none
 
       render args
 
@@ -40,13 +43,16 @@ module WYOFG
         self
 
       when :dungeon_editor
-        WYOFG::DungeonEditor.new args
+        #@dungeon_editor
+        args.state.dungeon_editor
 
       when :character_editor
-        WYOFG::CharacterEditor.new args
+        #@character_editor
+        args.state.character_editor
 
       when :game
-        WYOFG::Game.new args
+        #@game
+        args.state.game
 
       end
     end

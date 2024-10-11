@@ -10,10 +10,15 @@ require 'app/game.rb'
 
 
 def setup(args)
-  args.state.scene  = WYOFG::MainMenu.new
-
   args.state.dungeons   = nil
   args.state.characters = nil
+
+  args.state.main_menu        = WYOFG::MainMenu.new args
+  args.state.dungeon_editor   = WYOFG::DungeonEditor.new args
+  args.state.character_editor = WYOFG::CharacterEditor.new args
+  args.state.game             = WYOFG::Game.new args
+
+  args.state.scene  = args.state.main_menu
 
   args.state.setup_done = true
 end
