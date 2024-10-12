@@ -35,17 +35,16 @@ module WYOFG
       # Dungeon Data :
       width   = WYOFG::Game::DUNGEON_SIZE[0]
       height  = WYOFG::Game::DUNGEON_SIZE[1]
-      @dungeons = []
-      @dungeons = SAVE_ENTRIES.times.map do |dungeon_index|
-                    WYOFG::Game::DUNGEON_DEPTH.times.map do |level_index|
-                      level = []
-                      height.times do |y|
-                        level << []
-                        width.times { |x| level.last << { type: 0, visited: false } }
-                      end
-                      level
-                    end
-                  end
+      args.state.dungeons = SAVE_ENTRIES.times.map do |dungeon_index|
+                              WYOFG::Game::DUNGEON_DEPTH.times.map do |level_index|
+                                level = []
+                                height.times do |y|
+                                  level << []
+                                  width.times { |x| level.last << { type: 0, visited: false } }
+                                end
+                                level
+                              end
+                            end
       @current_dungeon  = 0
       @current_level    = 0
 
@@ -112,43 +111,43 @@ module WYOFG
         end
 
         if args.inputs.keyboard.key_down.zero
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 0
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 0
         end
 
         if args.inputs.keyboard.key_down.one
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 1
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 1
         end
 
         if args.inputs.keyboard.key_down.two
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 2
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 2
         end
 
         if args.inputs.keyboard.key_down.three
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 3
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 3
         end
 
         if args.inputs.keyboard.key_down.four
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 4
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 4
         end
 
         if args.inputs.keyboard.key_down.five
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 5
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 5
         end
 
         if args.inputs.keyboard.key_down.six
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 6
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 6
         end
 
         if args.inputs.keyboard.key_down.seven
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 7
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 7
         end
 
         if args.inputs.keyboard.key_down.eight
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 8
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 8
         end
 
         if args.inputs.keyboard.key_down.nine
-          @dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 9
+          args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 9
         end
 
         if args.inputs.keyboard.key_down.b#less_than
@@ -170,7 +169,7 @@ module WYOFG
         end
 
         if args.inputs.keyboard.key_down.d
-          WYOFG::Debug.put_dungeon  @dungeons[@current_dungeon][@current_level],
+          WYOFG::Debug.put_dungeon  args.state.dungeons[@current_dungeon][@current_level],
                                     WYOFG::Game::DUNGEON_SIZE[0],
                                     WYOFG::Game::DUNGEON_SIZE[1]
         end
@@ -228,7 +227,7 @@ module WYOFG
       end
 
       # Dungeon :
-      @dungeons[@current_dungeon][@current_level].each.with_index do |row,y|
+      args.state.dungeons[@current_dungeon][@current_level].each.with_index do |row,y|
         row.each.with_index do |tile,x|
           tile_template = WYOFG::Game::TILES[tile[:type]]
           args.outputs.primitives <<  { x:        @dungeon_offset[0] + @tile_size * x,
