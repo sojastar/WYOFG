@@ -1,30 +1,33 @@
 module WYOFG
   class DungeonEditor
     EDITOR_DUNGEON_SCALE  = 3
-    DUNGEON_POSITION_Y  = 100
+    DUNGEON_POSITION_Y    = 100
 
     TITLE       = 'Dungeon Editor'
-    TITLE_SIZE  = 1
+    TITLE_SIZE  = 0
     #TITLE_FONT  = 'C64_Pro_Mono-STYLE.ttf',
-    TITLE_FONT  = 'white_rabit.ttf'
+    TITLE_FONT  = 'classic-7x5.ttf'
+    #TITLE_FONT  = 'white_rabit.ttf'
 
     HELP_OFFSET     = [ 50, 600 ]
     HELP_ENTRY_SIZE = [ 300, 40 ]
-    HELP_TEXT_SIZE  = 1
+    HELP_TEXT_SIZE  = 0
     #HELP_FONT       = 'C64_Pro_Mono-STYLE.ttf'
-    HELP_FONT       = 'white_rabit.ttf'
+    HELP_FONT       = 'classic-7x5.ttf'
+    #HELP_FONT       = 'white_rabit.ttf'
 
     SAVE_ENTRIES      = 10
     LOAD_MENU_ITEMS   = SAVE_ENTRIES.times.map do |i|
                           { icon:     :none,
-                            text:     "Dungeon #{i}",
+                            text:     "Dungeon #{i+1}",
                             value:    i }
                         end
     LOAD_MENU_OPTIONS = { #font:             'C64_Pro_Mono-STYLE.ttf',
-                          font:             "white_rabit.ttf",
+                          #font:             "white_rabit.ttf",
+                          font:             'classic-7x5.ttf',
                           text_color:       [ 0, 0, 0, 255 ],
                           bg_color:         [ 255, 255, 255, 255 ],
-                          text_size:        1,
+                          text_size:        0,
                           line_max_size:    30,
                           margin:           10,
                           pointer_char:     '>' }
@@ -194,15 +197,15 @@ module WYOFG
 
     def render(args)
       # Title :
-      args.outputs.primitives << { x:     @title_x,
-                                   y:     @title_y,
-                                   text:  TITLE,
-                                   font:  TITLE_FONT,
-                                   size:  TITLE_SIZE,
-                                   r:     0,
-                                   g:     0,
-                                   b:     0,
-                                   a:     255 }
+      args.outputs.primitives << { x:         @title_x,
+                                   y:         @title_y,
+                                   text:      TITLE,
+                                   font:      TITLE_FONT,
+                                   size_enum: TITLE_SIZE,
+                                   r:         0,
+                                   g:         0,
+                                   b:         0,
+                                   a:         255 }
 
 
       # Help :
@@ -219,11 +222,11 @@ module WYOFG
                                       source_w: WYOFG::Game::TILE_SIZE,
                                       source_h: WYOFG::Game::TILE_SIZE }
 
-        args.outputs.primitives <<  { x:    @tile_size + 10 + HELP_OFFSET[0] + HELP_ENTRY_SIZE[0] * ( index % 4 ),
-                                      y:    HELP_OFFSET[1] - HELP_ENTRY_SIZE[1] * index.div(4) + @help_size[1],  
-                                      text: "#{index} -> #{tile[:type]}",
-                                      font: HELP_FONT,
-                                      size: HELP_TEXT_SIZE }
+        args.outputs.primitives <<  { x:          @tile_size + 10 + HELP_OFFSET[0] + HELP_ENTRY_SIZE[0] * ( index % 4 ),
+                                      y:          HELP_OFFSET[1] - HELP_ENTRY_SIZE[1] * index.div(4) + @help_size[1],  
+                                      text:       "#{index} -> #{tile[:type]}",
+                                      font:       HELP_FONT,
+                                      size_enum:  HELP_TEXT_SIZE }
       end
 
       # Dungeon :

@@ -3,11 +3,12 @@ module WYOFG
     SAVE_ENTRIES  = 10
 
     TITLE       = 'Character Editor'
-    TITLE_SIZE  = 1
-    TITLE_FONT  = 'white_rabbit.ttf'
+    TITLE_SIZE  = 0
+    #TITLE_FONT  = 'white_rabbit.ttf'
+    TITLE_FONT  = 'classic-7x5.ttf'
 
-    DATA_SIZE     = 1
-    DATA_FONT     = 'white_rabbit.ttf'
+    DATA_SIZE     = 0
+    DATA_FONT     = 'classic-7x5.ttf'
     DATA_OFFSET_Y = 600
 
     SHOPS = { armoury:  { name:   "Armoury",
@@ -96,13 +97,13 @@ module WYOFG
 
     LOAD_MENU_ITEMS   = SAVE_ENTRIES.times.map do |i|
                           { icon:     :none,
-                            text:     "Character #{i}",
+                            text:     "Character #{i+1}",
                             value:    i }
                         end
-    LOAD_MENU_OPTIONS = { font:             'white_rabbit.ttf',
+    LOAD_MENU_OPTIONS = { font:             'classic-7x5.ttf',
                           text_color:       [ 255, 255, 255, 255 ],
                           bg_color:         [ 0, 0, 0, 255 ],
-                          text_size:        1,
+                          text_size:        0,
                           line_max_size:    30,
                           margin:           10,
                           pointer_char:     '>' }
@@ -323,15 +324,15 @@ module WYOFG
       args.outputs.background_color = [ 0, 0, 0 ]
 
       # Title :
-      args.outputs.primitives <<  { x:     @title_x,
-                                    y:     @title_y,
-                                    text:  TITLE,
-                                    font:  TITLE_FONT,
-                                    size:  TITLE_SIZE,
-                                    r:     255,
-                                    g:     255,
-                                    b:     255,
-                                    a:     255 }
+      args.outputs.primitives <<  { x:          @title_x,
+                                    y:          @title_y,
+                                    text:       TITLE,
+                                    font:       TITLE_FONT,
+                                    size_enum:  TITLE_SIZE,
+                                    r:          255,
+                                    g:          255,
+                                    b:          255,
+                                    a:          255 }
 
       # Character Data :
       character = args.state.characters[@current_char_index]
@@ -339,105 +340,105 @@ module WYOFG
       # Pages :
       case @mode
       when :stats
-        args.outputs.primitives <<  { x:    @data_offset_x,
-                                      y:    DATA_OFFSET_Y,
-                                      text: character[:class].capitalize,
-                                      font: DATA_FONT,
-                                      size: DATA_SIZE,
-                                      r:    255,
-                                      g:    255,
-                                      b:    255,
-                                      a:    255 }
+        args.outputs.primitives <<  { x:          @data_offset_x,
+                                      y:          DATA_OFFSET_Y,
+                                      text:       character[:class].capitalize,
+                                      font:       DATA_FONT,
+                                      size_enum:  DATA_SIZE,
+                                      r:          255,
+                                      g:          255,
+                                      b:          255,
+                                      a:          255 }
 
-        args.outputs.primitives <<  { x:    @data_offset_x,
-                                      y:    DATA_OFFSET_Y - @data_margin - @data_line_height,
-                                      text: "Points: #{character[:stat_points]}",
-                                      font: DATA_FONT,
-                                      size: DATA_SIZE,
-                                      r:    255,
-                                      g:    255,
-                                      b:    255,
-                                      a:    255 }
+        args.outputs.primitives <<  { x:          @data_offset_x,
+                                      y:          DATA_OFFSET_Y - @data_margin - @data_line_height,
+                                      text:       "Points: #{character[:stat_points]}",
+                                      font:       DATA_FONT,
+                                      size_enum:  DATA_SIZE,
+                                      r:          255,
+                                      g:          255,
+                                      b:          255,
+                                      a:          255 }
 
         WYOFG::Game::STATS.each.with_index do |stat,line|
           final_stat  = character[:base_stats][stat] + character[:stats][stat]
           indent      = line == @current_row ? '>' : ' '
-          args.outputs.primitives <<  { x:    @data_offset_x,
-                                        y:    DATA_OFFSET_Y - (line + 2 ) * ( @data_margin + @data_line_height ),
-                                        text: "#{indent} #{stat}: #{final_stat}",
-                                        font: DATA_FONT,
-                                        size: DATA_SIZE,
-                                        r:    255,
-                                        g:    255,
-                                        b:    255,
-                                        a:    255 }
+          args.outputs.primitives <<  { x:          @data_offset_x,
+                                        y:          DATA_OFFSET_Y - (line + 2 ) * ( @data_margin + @data_line_height ),
+                                        text:       "#{indent} #{stat}: #{final_stat}",
+                                        font:       DATA_FONT,
+                                        size_enum:  DATA_SIZE,
+                                        r:          255,
+                                        g:          255,
+                                        b:          255,
+                                        a:          255 }
         end
 
       when :armoury, :accoutrements, :emporium
-        args.outputs.primitives <<  { x:    @data_offset_x,
-                                      y:    DATA_OFFSET_Y,
-                                      text: SHOPS[@mode][:name].capitalize,
-                                      font: DATA_FONT,
-                                      size: DATA_SIZE,
-                                      r:    255,
-                                      g:    255,
-                                      b:    255,
-                                      a:    255 }
+        args.outputs.primitives <<  { x:          @data_offset_x,
+                                      y:          DATA_OFFSET_Y,
+                                      text:       SHOPS[@mode][:name].capitalize,
+                                      font:       DATA_FONT,
+                                      size_enum:  DATA_SIZE,
+                                      r:          255,
+                                      g:          255,
+                                      b:          255,
+                                      a:          255 }
 
-        args.outputs.primitives <<  { x:    @data_offset_x,
-                                      y:    DATA_OFFSET_Y - @data_margin - @data_line_height,
-                                      text: @shop_keeper,
-                                      font: DATA_FONT,
-                                      size: DATA_SIZE,
-                                      r:    255,
-                                      g:    255,
-                                      b:    255,
-                                      a:    255 }
+        args.outputs.primitives <<  { x:          @data_offset_x,
+                                      y:          DATA_OFFSET_Y - @data_margin - @data_line_height,
+                                      text:       @shop_keeper,
+                                      font:       DATA_FONT,
+                                      size_enum:  DATA_SIZE,
+                                      r:          255,
+                                      g:          255,
+                                      b:          255,
+                                      a:          255 }
 
-        args.outputs.primitives <<  { x:    @data_offset_x,
-                                      y:    DATA_OFFSET_Y - 2 * ( @data_margin + @data_line_height ),
-                                      text: "Gold Coins: #{character[:gold]}",
-                                      font: DATA_FONT,
-                                      size: DATA_SIZE,
-                                      r:    255,
-                                      g:    255,
-                                      b:    255,
-                                      a:    255 }
+        args.outputs.primitives <<  { x:          @data_offset_x,
+                                      y:          DATA_OFFSET_Y - 2 * ( @data_margin + @data_line_height ),
+                                      text:       "Gold Coins: #{character[:gold]}",
+                                      font:       DATA_FONT,
+                                      size_enum:  DATA_SIZE,
+                                      r:          255,
+                                      g:          255,
+                                      b:          255,
+                                      a:          255 }
 
         SHOPS[@mode][:goods].each.with_index do |item,line|
           item_name   = item_symbol_to_string(item[:type])
           indent      = line == @current_row ? '>' : ' '
-          args.outputs.primitives <<  { x:    @data_offset_x,
-                                        y:    DATA_OFFSET_Y - (line + 3 ) * ( @data_margin + @data_line_height ),
-                                        text: "#{indent} #{item_name.ljust(20)}#{item[:price]}",
-                                        font: DATA_FONT,
-                                        size: DATA_SIZE,
-                                        r:    255,
-                                        g:    255,
-                                        b:    255,
-                                        a:    255 }
+          args.outputs.primitives <<  { x:          @data_offset_x,
+                                        y:          DATA_OFFSET_Y - (line + 3 ) * ( @data_margin + @data_line_height ),
+                                        text:       "#{indent} #{item_name.ljust(20)}#{item[:price]}",
+                                        font:       DATA_FONT,
+                                        size_enum:  DATA_SIZE,
+                                        r:          255,
+                                        g:          255,
+                                        b:          255,
+                                        a:          255 }
         end
 
       when :name
-        args.outputs.primitives <<  { x:    @data_offset_x,
-                                      y:    DATA_OFFSET_Y,
-                                      text: NAME_INPUT_MESSAGE,
-                                      font: DATA_FONT,
-                                      size: DATA_SIZE,
-                                      r:    255,
-                                      g:    255,
-                                      b:    255,
-                                      a:    255 }
+        args.outputs.primitives <<  { x:          @data_offset_x,
+                                      y:          DATA_OFFSET_Y,
+                                      text:       NAME_INPUT_MESSAGE,
+                                      font:       DATA_FONT,
+                                      size_enum:  DATA_SIZE,
+                                      r:          255,
+                                      g:          255,
+                                      b:          255,
+                                      a:          255 }
 
-        args.outputs.primitives <<  { x:    @data_offset_x,
-                                      y:    DATA_OFFSET_Y - @data_margin - @data_line_height,
-                                      text: character[:name],
-                                      font: DATA_FONT,
-                                      size: DATA_SIZE,
-                                      r:    255,
-                                      g:    255,
-                                      b:    255,
-                                      a:    255 }
+        args.outputs.primitives <<  { x:          @data_offset_x,
+                                      y:          DATA_OFFSET_Y - @data_margin - @data_line_height,
+                                      text:       character[:name],
+                                      font:       DATA_FONT,
+                                      size_enum:  DATA_SIZE,
+                                      r:          255,
+                                      g:          255,
+                                      b:          255,
+                                      a:          255 }
 
       when :load
         @menu.render(args)

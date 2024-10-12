@@ -11,12 +11,14 @@ module WYOFG
                             value:    :game } ]
     MAIN_MENU_OPTIONS = { #icon_width:       24,
                           #icon_height:      24,
-                          font:             "white_rabbit.ttf",
+                          #font:             "white_rabbit.ttf",
+                          font:             'classic-7x5.ttf',
                           #font:             "yoster.ttf",
+                          #font:             "Minecraft.ttf",
                           #font:             "C64_Pro_Mono-STYLE.ttf",
                           text_color:       [ 255, 255, 255, 255 ],
                           bg_color:         [ 0, 0, 0, 255 ],
-                          text_size:        1,
+                          text_size:        0,#1,
                           line_max_size:    30,
                           #icon_text_margin: 10,
                           margin:           10,
@@ -28,9 +30,6 @@ module WYOFG
       @menu.move_to ( args.grid.w - @menu.pixel_size[0] ) / 2,
                     ( args.grid.h - @menu.pixel_size[1] ) / 2
 
-      #@dungeon_editor   = WYOFG::DungeonEditor.new args
-      #@character_editor = WYOFG::CharacterEditor.new args
-      #@game             = WYOFG::Game.new args
     end
 
     def tick(args)
@@ -43,15 +42,12 @@ module WYOFG
         self
 
       when :dungeon_editor
-        #@dungeon_editor
         args.state.dungeon_editor
 
       when :character_editor
-        #@character_editor
         args.state.character_editor
 
       when :game
-        #@game
         args.state.game
 
       end
