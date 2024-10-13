@@ -107,6 +107,8 @@ module WYOFG
                           margin:           10,
                           pointer_char:     '>' }
 
+    attr_reader :character_menu
+
     def initialize(args)
       # Character Data :
       if args.state.characters.nil?
@@ -135,8 +137,8 @@ module WYOFG
 
       @current_row  = 0
 
-      @menu  = WYOFG::UI::Menu.new  LOAD_MENU_ITEMS,
-                                    LOAD_MENU_OPTIONS
+      @character_menu = WYOFG::UI::Menu.new LOAD_MENU_ITEMS,
+                                            LOAD_MENU_OPTIONS
 
       @shop_keeper = SHOP_WELCOME_MESSAGE
 
@@ -276,7 +278,7 @@ module WYOFG
 
       end
 
-      if @mode != :load
+      if @mode != :menu
         if args.inputs.keyboard.key_down.tab
           @mode = case @mode
                   when :stats         then :armoury
@@ -290,19 +292,19 @@ module WYOFG
         if  args.inputs.keyboard.key_down.space ||
             args.inputs.keyboard.key_down.enter
           @prev_mode  = @mode
-          @mode       = :load
+          @mode       = :menu
 
-          @menu.calculate_pixel_size
-          @menu.move_to ( $gtk.args.grid.w - @menu.pixel_size[0] ) / 2,
-                        ( $gtk.args.grid.h - @menu.pixel_size[1] ) / 2
+          @character_menu.calculate_pixel_size
+          @character_menu.move_to ( $gtk.args.grid.w - @character_menu.pixel_size[0] ) / 2,
+                                  ( $gtk.args.grid.h - @character_menu.pixel_size[1] ) / 2
         end
 
         if args.inputs.keyboard.key_down.s
           puts "saving"
         end
 
-      elsif @mode == :load
-        selection = @menu.tick args
+      elsif @mode == :menu
+        selection = @character_menu.tick args
         if selection != :none
           @current_char_index  = selection
           @mode = @prev_mode
@@ -440,8 +442,8 @@ module WYOFG
                                       b:          255,
                                       a:          255 }
 
-      when :load
-        @menu.render(args)
+      when :menu
+        @character_menu.render(args)
 
       end
 

@@ -26,7 +26,7 @@ module WYOFG
                           margin:           10,
                           pointer_char:     '>' }
 
-    attr_reader :dungeons
+    attr_reader :dungeon_menu
 
     def initialize(args)
       # Dungeon Data :
@@ -48,10 +48,10 @@ module WYOFG
       # Editor logic :
       @mode = :editor
 
-      @load_menu  = WYOFG::UI::Menu.new LOAD_MENU_ITEMS,
+      @dungeon_menu  = WYOFG::UI::Menu.new LOAD_MENU_ITEMS,
                                         LOAD_MENU_OPTIONS
-      @load_menu.move_to  ( $gtk.args.grid.w - @load_menu.pixel_size[0] ) / 2,
-                          ( $gtk.args.grid.h - @load_menu.pixel_size[1] ) / 2
+      @dungeon_menu.move_to ( $gtk.args.grid.w - @dungeon_menu.pixel_size[0] ) / 2,
+                            ( $gtk.args.grid.h - @dungeon_menu.pixel_size[1] ) / 2
 
       # Editor Rendering :
       pixel_width   = WYOFG::Game::TILE_SIZE * width
@@ -159,8 +159,9 @@ module WYOFG
           end
         end
 
-        if args.inputs.keyboard.key_down.space
-          @mode = :load_menu
+        if  args.inputs.keyboard.key_down.space ||
+            args.inputs.keyboard.key_down.enter
+          @mode = :menu
         end
 
         if args.inputs.keyboard.key_down.s
@@ -173,8 +174,8 @@ module WYOFG
                                     WYOFG::Game::DUNGEON_SIZE[1]
         end
 
-      when :load_menu
-        selection = @load_menu.tick args
+      when :menu
+        selection = @dungeon_menu.tick args
         if selection != :none
           @current_dungeon  = selection
           @mode             = :editor
@@ -257,8 +258,8 @@ module WYOFG
                                       a:  alpha,
                                       primitive_marker: :solid }
 
-      when :load_menu
-        @load_menu.render(args)
+      when :menu
+        @dungeon_menu.render(args)
         
       end
     end

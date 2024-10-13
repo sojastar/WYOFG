@@ -20,16 +20,38 @@ module WYOFG
     STATS         = [ :strength, :vitality, :agility, :intelligence, :luck, :aura, :morality ]
 
     def initialize(args)
+      @mode = :load_player
+
+      @level  = 0
 
     end
 
     def tick(args)
+      case @mode
+      when :load_character
+
+      when :load_dungeon
+
+      when :dive
+
+      end
+
       render(args)
 
       self
     end
 
     def render(args)
+      case @mode
+      when :load_character
+        args.state.character_editor.character_menu.render(args)
+
+      when :load_dungeon
+        args.state.dungeon_editor.dungeon_menu.render(args)
+
+      when :dive
+
+      end
     end
   end
 end
