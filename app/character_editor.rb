@@ -4,7 +4,6 @@ module WYOFG
 
     TITLE       = 'Character Editor'
     TITLE_SIZE  = 0
-    #TITLE_FONT  = 'white_rabbit.ttf'
     TITLE_FONT  = 'classic-7x5.ttf'
 
     DATA_SIZE     = 0
@@ -278,7 +277,7 @@ module WYOFG
       end
 
       if @mode != :load
-        if args.inputs.keyboard.key_down.space
+        if args.inputs.keyboard.key_down.tab
           @mode = case @mode
                   when :stats         then :armoury
                   when :armoury       then :accoutrements
@@ -288,7 +287,8 @@ module WYOFG
                   end
         end
 
-        if args.inputs.keyboard.key_down.escape
+        if  args.inputs.keyboard.key_down.space ||
+            args.inputs.keyboard.key_down.enter
           @prev_mode  = @mode
           @mode       = :load
 
@@ -298,7 +298,7 @@ module WYOFG
         end
 
         if args.inputs.keyboard.key_down.s
-          # save
+          puts "saving"
         end
 
       elsif @mode == :load
@@ -309,7 +309,7 @@ module WYOFG
 
         end
 
-        if args.inputs.keyboard.key_down.escape
+        if args.inputs.keyboard.key_down.space
           @mode = @prev_mode
         end
 
@@ -317,7 +317,7 @@ module WYOFG
 
       render(args)
 
-      args.inputs.keyboard.key_down.tab ? args.state.main_menu : self
+      args.inputs.keyboard.key_down.escape ? args.state.main_menu : self
     end
 
     def render(args)

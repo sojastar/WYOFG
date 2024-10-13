@@ -147,17 +147,19 @@ module WYOFG
           args.state.dungeons[@current_dungeon][@current_level][@cursor[1]][@cursor[0]][:type] = 9
         end
 
-        if args.inputs.keyboard.key_down.b#less_than
-          @current_level -= 1
-          @current_level  = 0 if @current_level < 0
+        if args.inputs.keyboard.key_down.tab
+          if args.inputs.keyboard.key_held.shift
+            @current_level -= 1
+            @current_level  = 0 if @current_level < 0
+
+          else
+            @current_level += 1
+            @current_level  = 2 if @current_level > 2
+
+          end
         end
 
-        if args.inputs.keyboard.key_down.n#greater_than
-          @current_level += 1
-          @current_level  = 2 if @current_level > 2
-        end
-
-        if args.inputs.keyboard.key_down.l
+        if args.inputs.keyboard.key_down.space
           @mode = :load_menu
         end
 
@@ -178,7 +180,8 @@ module WYOFG
           @mode             = :editor
         end
 
-        if args.inputs.keyboard.key_down.escape
+        if  args.inputs.keyboard.key_down.space ||
+            args.inputs.keyboard.key_down.enter
           @mode = :editor
         end
 
@@ -186,7 +189,7 @@ module WYOFG
 
       render(args)
 
-      args.inputs.keyboard.key_down.tab ? args.state.main_menu : self
+      args.inputs.keyboard.key_down.escape ? args.state.main_menu : self
     end
 
     def render(args)

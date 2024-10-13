@@ -13,12 +13,13 @@ A loose Ruby/DragonRuby port of the programs present in the [Write Your Own Fant
 
 ## Character Editor:
 
-- tab to move between pages
+- tab and to move between pages
 - up and down keys to move between rows
 - left and right arrow keys to add and remove skill points
 - right arrow key to buy item (if possible)
 - space or enter to open the character selection menu, escape to go back to edit mode
 - escape to go back to main menu
+- r key to reroll character
 - s key to save
 
 ## Game:
