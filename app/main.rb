@@ -1,4 +1,5 @@
 require 'lib/string.rb'
+require 'lib/file.rb'
 
 require 'app/menu.rb'
 require 'app/debug.rb'
@@ -10,11 +11,16 @@ require 'app/game.rb'
 
 
 def setup(args)
-  puts args.gtk.list_files('data')
-  if File.exist?('data/wyofg.txt')
-    puts 'zobiiiiiiiii'
+  if File.exist? WYOFG::DungeonEditor::DUNGEONS_SAVE_FILE
+    puts "File #{WYOFG::DungeonEditor::DUNGEONS_SAVE_FILE} exists."
   else
-    puts 'nooooooooooo'
+    puts "File #{WYOFG::DungeonEditor::DUNGEONS_SAVE_FILE} does not exists."
+  end
+
+  if File.exist? WYOFG::CharacterEditor::CHARACTERS_SAVE_FILE
+    puts "File #{WYOFG::CharacterEditor::CHARACTERS_SAVE_FILE} exists."
+  else
+    puts "File #{WYOFG::CharacterEditor::CHARACTERS_SAVE_FILE} does not exists."
   end
 
   args.state.dungeons   = nil

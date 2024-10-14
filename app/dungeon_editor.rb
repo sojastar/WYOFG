@@ -26,22 +26,39 @@ module WYOFG
                           margin:           10,
                           pointer_char:     '>' }
 
+    DUNGEONS_SAVE_FILE  = 'data/wyofg_dungeons.txt'
+
     attr_reader :dungeon_menu
 
     def initialize(args)
       # Dungeon Data :
       width   = WYOFG::Game::DUNGEON_SIZE[0]
       height  = WYOFG::Game::DUNGEON_SIZE[1]
-      args.state.dungeons = SAVE_ENTRIES.times.map do |dungeon_index|
-                              WYOFG::Game::DUNGEON_DEPTH.times.map do |level_index|
-                                level = []
-                                height.times do |y|
-                                  level << []
-                                  width.times { |x| level.last << { type: 0, visited: false } }
+
+
+      if File.exist? DUNGEONS_SAVE_FILE
+        data  = $gtk.deserialize_state(DUNGEONS_SAVE_FILE)
+
+        args.state.dungeons = data[:dungeons].map do |dungeon|
+                                dungeon.map do |level|
+                                  level.map do |row|
+                                    row.map { |tile_type| { type: tile_type, visited: false } }
+                                  end
                                 end
-                                level
                               end
-                            end
+
+      else
+        args.state.dungeons = SAVE_ENTRIES.times.map do |dungeon_index|
+                                WYOFG::Game::DUNGEON_DEPTH.times.map do |level_index|
+                                  level = []
+                                  height.times do |y|
+                                    level << []
+                                    width.times { |x| level.last << { type: 0, visited: false } }
+                                  end
+                                  level
+                                end
+                              end
+      end
       @current_dungeon  = 0
       @current_level    = 0
 
@@ -165,8 +182,19 @@ module WYOFG
         end
 
         if args.inputs.keyboard.key_down.s
-          puts 'saving'
-          $gtk.serialize_state('wyofg.txt', args.state)
+          data  = { size:     WYOFG::Game::DUNGEON_SIZE,
+                    count:    SAVE_ENTRIES,
+                    dungeons: [] }
+
+          data[:dungeons] = args.state.dungeons.map do |dungeon|
+                              dungeon.map do |level|
+                                level.map do |row|
+                                  row.map { |tile| tile[:type] }
+                                end
+                              end
+                            end
+
+          $gtk.write_file(DUNGEONS_SAVE_FILE, data.to_s)
         end
 
         if args.inputs.keyboard.key_down.d
@@ -176,7 +204,6 @@ module WYOFG
         end
 
       when :menu
-        #selection = @dungeon_menu.tick args
         selection = @dungeon_menu.tick args
         if selection != :none
           @current_dungeon  = selection

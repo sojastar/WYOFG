@@ -107,6 +107,8 @@ module WYOFG
                           margin:           10,
                           pointer_char:     '>' }
 
+    CHARACTERS_SAVE_FILE  = 'wyofg_characters.txt'
+
     attr_reader :character_menu
 
     def initialize(args)
@@ -300,8 +302,7 @@ module WYOFG
         end
 
         if args.inputs.keyboard.key_down.s
-          puts 'saving'
-          $gtk.serialize_state('wyofg.txt', args.state)
+          $gtk.serialize_state(CHARACTERS_SAVE_FILE, args.state.characters)
         end
 
       elsif @mode == :menu
