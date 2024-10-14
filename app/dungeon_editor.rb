@@ -166,6 +166,7 @@ module WYOFG
 
         if args.inputs.keyboard.key_down.s
           puts 'saving'
+          $gtk.serialize_state('wyofg.txt', args.state)
         end
 
         if args.inputs.keyboard.key_down.d
@@ -175,6 +176,7 @@ module WYOFG
         end
 
       when :menu
+        #selection = @dungeon_menu.tick args
         selection = @dungeon_menu.tick args
         if selection != :none
           @current_dungeon  = selection

@@ -300,7 +300,8 @@ module WYOFG
         end
 
         if args.inputs.keyboard.key_down.s
-          puts "saving"
+          puts 'saving'
+          $gtk.serialize_state('wyofg.txt', args.state)
         end
 
       elsif @mode == :menu

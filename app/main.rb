@@ -10,6 +10,13 @@ require 'app/game.rb'
 
 
 def setup(args)
+  puts args.gtk.list_files('data')
+  if File.exist?('data/wyofg.txt')
+    puts 'zobiiiiiiiii'
+  else
+    puts 'nooooooooooo'
+  end
+
   args.state.dungeons   = nil
   args.state.characters = nil
 
