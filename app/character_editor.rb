@@ -107,14 +107,17 @@ module WYOFG
                           margin:           10,
                           pointer_char:     '>' }
 
-    CHARACTERS_SAVE_FILE  = 'wyofg_characters.txt'
+    CHARACTERS_SAVE_FILE  = 'data/wyofg_characters.txt'
 
     attr_reader :character_menu
 
     def initialize(args)
       # Character Data :
-      if args.state.characters.nil?
-        args.state.characters = SAVE_ENTRIES.times.map do |index|
+      args.state.characters = if File.exist?(CHARACTERS_SAVE_FILE)
+                                data = $gtk.deserialize_state(CHARACTERS_SAVE_FILE)
+                                data[:characters]
+                              else
+                                SAVE_ENTRIES.times.map do |index|
                                   base_stats  = WYOFG::Game::STATS
                                                 .zip( Array.new(WYOFG::Game::STATS.length) { rand(6) + 2 } )
                                                 .to_h
@@ -122,7 +125,7 @@ module WYOFG
                                           .zip( Array.new(WYOFG::Game::STATS.length) { 0 } )
                                           .to_h
 
-                                  { name:         "Player #{index}",
+                                  { name:         "Player #{index+1}",
                                     class:        class_from_stats(base_stats,stats),
                                     base_stats:   base_stats,
                                     stats:        stats,
@@ -131,7 +134,7 @@ module WYOFG
                                     gold:         150,
                                     stuff:        [] }
                                 end
-      end
+                              end
       @current_char_index = 0
 
       # Editor Logic :
@@ -141,6 +144,9 @@ module WYOFG
 
       @character_menu = WYOFG::UI::Menu.new LOAD_MENU_ITEMS,
                                             LOAD_MENU_OPTIONS
+      @character_menu.items.each.with_index do |item,index|
+        item[:text] = args.state.characters[index][:name]
+      end
 
       @shop_keeper = SHOP_WELCOME_MESSAGE
 
@@ -270,11 +276,19 @@ module WYOFG
 
         end
 
-        if args.inputs.keyboard.key_down.char
-          if current_char[:name].length < NAME_MAX_LENGTH
-            current_char[:name] << args.inputs.keyboard.key_down.char
+        unless  ( args.inputs.keyboard.key_held.ctrl ||
+                  args.inputs.keyboard.key_held.meta ||
+                  args.inputs.keyboard.key_down.backspace ||
+                  args.inputs.keyboard.key_down.delete ||
+                  args.inputs.keyboard.key_down.enter ||
+                  args.inputs.keyboard.key_down.tab )
+          if args.inputs.keyboard.key_down.char
+            if current_char[:name].length < NAME_MAX_LENGTH
+              current_char[:name] << args.inputs.keyboard.key_down.char
+              puts args.inputs.keyboard.key_down.char.to_s
 
-            LOAD_MENU_ITEMS[@current_char_index][:text] = current_char[:name]
+              LOAD_MENU_ITEMS[@current_char_index][:text] = current_char[:name]
+            end
           end
         end
 
@@ -301,9 +315,19 @@ module WYOFG
                                   ( $gtk.args.grid.h - @character_menu.pixel_size[1] ) / 2
         end
 
-        if args.inputs.keyboard.key_down.s
-          $gtk.serialize_state(CHARACTERS_SAVE_FILE, args.state.characters)
+        if ( args.inputs.keyboard.key_held.ctrl ||
+              args.inputs.keyboard.key_held.meta )
+          if args.inputs.keyboard.key_down.s
+            data  = { characters: args.state.characters }
+            $gtk.write_file(CHARACTERS_SAVE_FILE, data.to_s)
+            #$gtk.serialize_state(CHARACTERS_SAVE_FILE, args.state.characters.to_s)
+          end
         end
+
+        #if args.inputs.keyboard.key_down.s
+        #  #$gtk.serialize_state(CHARACTERS_SAVE_FILE, args.state.characters)
+        #  puts args.state.characters
+        #end
 
       elsif @mode == :menu
         selection = @character_menu.tick args
