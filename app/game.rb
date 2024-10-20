@@ -26,7 +26,7 @@ module WYOFG
       @mode = :load_dungeon
 
       @current_dungeon    = nil
-      @level              = 0
+      @current_level      = 0
       @current_character  = nil
 
       # Rendering :
